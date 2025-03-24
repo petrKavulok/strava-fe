@@ -17,7 +17,13 @@ export interface SportsData {
 export async function fetchSportsData(): Promise<SportsData[]> {
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-    const response = await fetch(`${API_BASE_URL}/api/sports`);
+    const response = await fetch(`${API_BASE_URL}/api/sports`, {
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
     if (!response.ok) {
         throw new Error('Failed to fetch sports data');
     }
