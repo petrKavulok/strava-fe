@@ -78,7 +78,7 @@ export const DonutChart: React.FC<DonutChartProps> = ({ data }) => {
                         }));
                     },
                     usePointStyle: true,
-                    render: (legendItem: any, context: any) => {
+                    render: (legendItem: any) => {
                         return ` ${legendItem.text}`;
                     }
                 }
