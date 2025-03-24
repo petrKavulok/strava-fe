@@ -5,27 +5,26 @@ import airtableRouter from './api/airtable';
 const app = express();
 const PORT = 3001;  // Different port than Vite
 
-const allowedOrigins = [
-  'https://strava-fe.vercel.app',
-  'http://strava-fe.vercel.app',
-  'http://localhost:3000'
-];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// Instead of using the cors middleware's origin callback,
+// we'll determine the allowed origin based on the request
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin === 'https://strava-fe.vercel.app' || 
+      origin === 'http://localhost:3000') {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
 
 app.use('/api', airtableRouter);
-
+  
 app.listen(PORT, () => {
   console.log(`API Server running on port ${PORT}`);
 }); 
